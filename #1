@@ -1,0 +1,85 @@
+// Returns a random DNA base
+const returnRandBase = () => {
+  const dnaBases = ['A', 'T', 'C', 'G']
+  return dnaBases[Math.floor(Math.random() * 4)] 
+}
+
+// Returns a random single stand of DNA containing 15 bases
+const mockUpStrand = () => {
+  const newStrand = []
+  for (let i = 0; i < 15; i++) {
+    newStrand.push(returnRandBase())
+  }
+  return newStrand
+}
+
+const pAequorFactory = (num, bases) => {
+  return  {
+    specimen: num,
+    dna: bases,
+    compareDNA(pAequor) {
+      let count = 0;
+      for (let i=0; i < this.dna.length; i++)
+      if (pAequor.dna[i] === this.dna[i]) {
+      count++;
+      }
+      let sum = Math.floor(count / 15 * 100)
+      return `specimen #1 and specimen #2 have ${sum}% DNA in common`
+    },
+    mutate() {
+      console.log('--Mutation info--');
+      const dnaBases = ['A', 'T', 'C', 'G']
+      let index = Math.floor(Math.random() * this.dna.length);
+      
+      dnaBases.splice(dnaBases.indexOf(this.dna[index]), 1);
+      
+      let baseIndex = Math.floor(Math.random() * dnaBases.length);
+      console.log(`Index: ${index}`);
+      console.log(`Before: ${this.dna[index]}`);
+      this.dna[index] = dnaBases[baseIndex];
+      console.log(`After: ${this.dna[index]}`);
+      console.log(`DNA after mutation:  ${this.dna}`);
+      
+    },
+    willLikelySurvive() {
+      let G_count = 0;
+      let C_count = 0;
+      for (let i=0; i < this.dna.length; i++) {
+        if (this.dna[i] === 'G') {
+          G_count++;
+        }
+        else if (this.dna[i] === 'C') {
+          C_count++;
+        }
+      }
+      let G_rate = Math.floor(G_count / 15 * 100);
+      let C_rate = Math.floor(C_count / 15 * 100);
+      if (G_rate >= 60 || C_rate >= 60) {
+        return true;
+      }
+      else return false;
+      
+    }
+  }
+}
+// Test 
+let spc1 = pAequorFactory(1, mockUpStrand())
+let spc2 = pAequorFactory(2, mockUpStrand())
+console.log(`DNA of speciment #1: ${spc1.dna}`);
+spc1.mutate();
+console.log(`DNA of speciment #2: ${spc2.dna}`)
+console.log(spc2.compareDNA(spc1));
+
+console.log(spc1.willLikelySurvive());
+
+// 30 instances
+let pAeuorList = [];
+let j = 1;   
+while (pAeuorList.length < 30) {
+  let temp = pAequorFactory(j, mockUpStrand())
+  if (temp.willLikelySurvive() === true) {
+  pAeuorList.push(temp);
+  }
+  j += 1
+}
+console.log(pAeuorList);
